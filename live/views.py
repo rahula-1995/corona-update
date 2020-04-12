@@ -121,9 +121,8 @@ def about(request):
         sus.save()
         return render(request, 'covid/result.html')
 
-    ww = update('dd')
 
-    return render_to_response('covid/about.html', {'red':ww,'result':results})
+    return render_to_response('covid/about.html', {'result':results})
 
 
 
