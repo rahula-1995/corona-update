@@ -7,21 +7,21 @@ import request
 import json
 
 
-from selenium import webdriver
-from bs4 import BeautifulSoup
+#from selenium import webdriver
+#from bs4 import BeautifulSoup
 import time
-from selenium.webdriver.chrome.service import Service
+#from selenium.webdriver.chrome.service import Service
 
-from selenium.common.exceptions import InvalidSessionIdException
-GOOGLE_CHROME_PATH = '/app/.apt/usr/bin/google_chrome'
-CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
+#from selenium.common.exceptions import InvalidSessionIdException
+#GOOGLE_CHROME_PATH = '/app/.apt/usr/bin/google_chrome'
+#CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
 
-service = Service(CHROMEDRIVER_PATH)
+#service = Service(CHROMEDRIVER_PATH)
 
 
 #service = Service('/Users/Dell pc/Desktop/chromedriver')
-service.start()
-driver = webdriver.Remote(service.service_url)
+#service.start()
+#driver = webdriver.Remote(service.service_url)
 
 
 import requests
@@ -73,18 +73,18 @@ def indi(state):
     return statedict,districtdict,maindata
 
 
-def update(dd):
-    driver.get("https://timesofindia.indiatimes.com/india/coronavirus-india-live-updates-madhya-pradesh-covid-19-tally-rises-to-20-five-test-positive-in-indore/liveblog/74820018.cms")
-    content1 = driver.page_source
-    soup1 = BeautifulSoup(content1)
-    red = []
-    for a in soup1.findAll('div', attrs={'class': '_1KydD'}):
+#def update(dd):
+    #driver.get("https://timesofindia.indiatimes.com/india/coronavirus-india-live-updates-madhya-pradesh-covid-19-tally-rises-to-20-five-test-positive-in-indore/liveblog/74820018.cms")
+    #content1 = driver.page_source
+    #soup1 = BeautifulSoup(content1)
+    #red = []
+    #for a in soup1.findAll('div', attrs={'class': '_1KydD'}):
 
-        red.append(a.text)
-    f = {}
-    for i in range(len(red)):
-        f[i + 1] = red[i]
-    return f
+        #red.append(a.text)
+    #f = {}
+    #for i in range(len(red)):
+        #f[i + 1] = red[i]
+    #return f
 
 def about(request):
     #ww=update('dd')
