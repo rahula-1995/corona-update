@@ -165,7 +165,7 @@ def india(request):
     return render_to_response('covid/india.html',{'z1':z1,'z2':z2,'z3':z3,'z4':z4,'state':ee,'district':er,'d0':d0,'d1':d1,'d2':d2,'d3':d3,'e0':e0,'e1':e1})
 
 def index(request):
-    s=world('USA')
+    s,b=world('USA')
     #ee,er,ra=indi('Bihar')
     tv=s['World']
     tc=tv[0]
