@@ -13,13 +13,13 @@ import time
 from selenium.webdriver.chrome.service import Service
 
 from selenium.common.exceptions import InvalidSessionIdException
-#GOOGLE_CHROME_PATH = '/app/.apt/usr/bin/google_chrome'
-#CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
+GOOGLE_CHROME_PATH = '/app/.apt/usr/bin/google_chrome'
+CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
 
-#service = Service(CHROMEDRIVER_PATH)
+service = Service(CHROMEDRIVER_PATH)
 
 
-service = Service('/Users/Dell pc/Desktop/chromedriver')
+#service = Service('/Users/Dell pc/Desktop/chromedriver')
 service.start()
 driver = webdriver.Remote(service.service_url)
 
