@@ -1,11 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.shortcuts import render_to_response,get_object_or_404
-from .models import Report,State,District,Country,headWorld,headIndia
-from rest_framework.views import APIView
-from rest_framework import status
-from .serialiser import Countrysearializer,Statesearializer,Districtsearializer,headWorldsearializer,headindiasearializer
-from rest_framework.response import Response
+from django.shortcuts import render_to_response
+from .models import Report
+
 import request
 import json
 
@@ -16,227 +13,64 @@ import time
 from selenium.webdriver.chrome.service import Service
 
 from selenium.common.exceptions import InvalidSessionIdException
-GOOGLE_CHROME_PATH = '/app/.apt/usr/bin/google_chrome'
-CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
+#GOOGLE_CHROME_PATH = '/app/.apt/usr/bin/google_chrome'
+#CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
 
-service = Service(CHROMEDRIVER_PATH)
+#service = Service(CHROMEDRIVER_PATH)
 
 
-#service = Service('/Users/Dell pc/Desktop/chromedriver')
+service = Service('/Users/Dell pc/Desktop/chromedriver')
 service.start()
 driver = webdriver.Remote(service.service_url)
 
-class country(APIView):
 
-    def get_object(self, pk):
-        try:
-            return Country.objects.filter(country_name=pk)
-        except Country.DoesNotExist:
-            return Response({'message': 'Country not in my list'}, status=status.HTTP_400_BAD_REQUEST)
-
-    def get(self, request,pk):
-        worldl=self.get_object(pk)
-        serializer= Countrysearializer(worldl,many=True)
-        return Response(serializer.data)
-
-class state(APIView):
-
-    def get_object(self, pk):
-        try:
-            return State.objects.filter(state_name=pk)
-        except State.DoesNotExist:
-            return Response({'message': 'state not in my list'}, status=status.HTTP_400_BAD_REQUEST)
-
-    def get(self, request,pk):
-        worldl=self.get_object(pk)
-        serializer=Statesearializer(worldl,many=True)
-        return Response(serializer.data)
-
-class district(APIView):
-
-    def get_object(self, pk):
-        try:
-            return District.objects.filter(district_name=pk)
-        except District.DoesNotExist:
-            return Response({'message': 'district not in my list'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-    def get(self, request,pk):
-        worldl=self.get_object(pk)
-        serializer=Districtsearializer(worldl,many=True)
-        return Response(serializer.data)
-
-class headworld(APIView):
-
-
-
-    def get(self, request):
-        worldl=headWorld.objects.all()
-        serializer=headWorldsearializer(worldl,many=True)
-        return Response(serializer.data)
-
-class headindia(APIView):
-
-
-    def get(self, request):
-        worldl=headIndia.objects.all()
-        serializer=headindiasearializer(worldl,many=True)
-        return Response(serializer.data)
-
-class countryall(APIView):
-
-
-    def get(self, request):
-        worldl=Country.objects.all()
-        serializer= Countrysearializer(worldl,many=True)
-        return Response(serializer.data)
-
-class stateall(APIView):
-
-    def get(self, request):
-        worldl=State.objects.all()
-        serializer=Statesearializer(worldl,many=True)
-        return Response(serializer.data)
-
-
-class districtall(APIView):
-
-
-    def get(self, request):
-        worldl = District.objects.all()
-        serializer = Districtsearializer(worldl, many=True)
-        return Response(serializer.data)
-
-
+import requests
 
 
 
 def world(country):
-    driver.get("https://www.worldometers.info/coronavirus/")
-    content1 = driver.page_source
-    soup1 = BeautifulSoup(content1)
-    r = []
-    for a in soup1.findAll('div', attrs={'class': 'maincounter-number'}):
-        r.append(a.text)
-    rows = soup1.find_all('tr')
-
+    worlddata = requests.get('https://coronaupdate-api.herokuapp.com/worlddata/')
+    data1 = worlddata.json()
     worlddict = {}
-    for row in rows:
-        cells = row.find_all('td')
+    for ele in data1:
+        s = []
+        for key, value in ele.items():
+            s.append(value)
+        worlddict[s[0]] = s[1:]
 
-        if len(cells) == 13:
-            if cells[0].text not in worlddict:
-                worlddict[cells[0].text] = [cells[1].text, cells[3].text,cells[5].text, cells[6].text]
-
-    for key,value in worlddict.items():
-        if len(Country.objects.filter(country_name=key))>0:
-
-            c=Country.objects.filter(country_name=key)
-            c.update(country_case=value[0])
-            c.update(country_active_case=value[3])
-            c.update(country_recovered_case=value[2])
-            c.update(country_death_case=value[1])
-
-        else:
-            c=Country()
-            c.country_name=key
-            c.country_case=value[0]
-            c.country_active_case=value[3]
-            c.country_recovered_case=value[2]
-            c.country_death_case=value[1]
-            c.save()
-
-
-    return worlddict,r
+    return worlddict
 
 def indi(state):
-    driver.get("https://www.covid19india.org/")
-    time.sleep(2)
-    content1 = driver.page_source
-    soup1 = BeautifulSoup(content1)
-    statedata = soup1.find_all('tr', attrs={'class': 'state'})
+    statedata = requests.get('https://coronaupdate-api.herokuapp.com/indiadata/')
+    data2 = statedata.json()
+
     statedict = {}
-    for row in statedata:
-        cells = row.find_all('td')
+    for ele in data2:
+        s = []
+        for key, value in ele.items():
+            s.append(value)
+        statedict[s[0]] = s[1:]
 
-        if cells[0].text not in statedict:
-            li = []
-            for ele in cells:
-                f = ele.find_all('span', attrs={'class': 'table__count-text'})
-                for ele in f:
-                    li.append(ele.text)
+    districtdata = requests.get('https://coronaupdate-api.herokuapp.com/districtdata/')
+    data3 = districtdata.json()
 
-            statedict[cells[0].text] = li
-
-    for key,value in statedict.items():
-        if len(State.objects.filter(state_name=key))>0:
-
-            c=State.objects.filter(state_name=key)
-            c.update(state_case=value[0])
-
-            c.update(state_recovered_case=value[1])
-            c.update(state_death_case=value[2])
-
-        else:
-            c=State()
-            c.state_name=key
-            c.state_case=value[0]
-
-            c.state_recovered_case=value[1]
-            c.state_death_case=value[2]
-            c.save()
-
-    districtdata = soup1.find_all('tr', attrs={'class': 'district'})
     districtdict = {}
-    for row in districtdata:
-        cells = row.find_all('td')
+    for ele in data3:
+        s = []
+        for key, value in ele.items():
+            s.append(value)
+        districtdict[s[0]] = s[1:]
 
-        if cells[0].text not in districtdict :
-            li = []
-            for ele in cells:
-                f = ele.find_all('span', attrs={'class': 'table__count-text'})
-                for ele in f:
-                    li.append(ele.text)
+    maindatas = requests.get('https://coronaupdate-api.herokuapp.com/indiahead/')
+    data4 = maindatas.json()
 
-            districtdict[cells[0].text] = li
-
-    for key,value in districtdict.items():
-        if len(District.objects.filter(district_name=key))>0:
-
-            c=District.objects.filter(district_name=key)
-            c.update(district_cases=value[0])
-
-        else:
-            c=District()
-            c.district_name=key
-            c.district_cases=value[0]
-
-            c.save()
-
-    tt = soup1.find_all('div', attrs={'class': 'Level'})
-    ra = []
-    for ele in tt:
-        cc = ele.find_all('h1')
-        for ele in cc:
-            ra.append(ele.text)
+    maindata = []
+    for ele in data4:
+        for key, value in ele.items():
+            maindata.append(value)
 
 
-    if (headIndia.objects.count())>0:
-
-        headIndia.confirmed_india_case=ra[0]
-        headIndia.active_india_case = ra[1]
-        headIndia.india_death_case=ra[2]
-        headIndia.recovered_india_case = ra[3]
-    else:
-        c=headIndia()
-        c.confirmed_india_case=ra[0]
-        c.active_india_case=ra[1]
-        c.india_death_case=ra[2]
-        c.recovered_india_case=ra[3]
-
-        c.save()
-
-    return statedict,districtdict,ra
+    return statedict,districtdict,maindata
 
 
 def update(dd):
@@ -253,7 +87,7 @@ def update(dd):
     return f
 
 def about(request):
-    ww=update('dd')
+    #ww=update('dd')
     if (request.GET.get('age')):
         age=int(request.GET.get('age'))
     else:
@@ -287,29 +121,29 @@ def about(request):
         sus.save()
         return render(request, 'covid/result.html')
 
+    ww = update('dd')
 
-
-    return render_to_response('covid/about.html', {'red': ww,'result':results})
+    return render_to_response('covid/about.html', {'red':ww,'result':results})
 
 
 
 
 def india(request):
-    ee, er, ra = indi('Bihar')
+    ee, er,ra = indi('Bihar')
+
 
     z1=ra[0]
     z2=ra[1]
     z3=ra[2]
     z4=ra[3]
     fg = request.GET.get('state')
-    print(fg)
     fg=str(fg)
     if fg in ee:
         cn=ee[fg]
         d0="Status for"+str(fg)
         d1=cn[0]
-        d2=cn[1]
-        d3=cn[2]
+        d2=cn[2]
+        d3=cn[3]
     else:
         d0="Please type the state name"
         d1=0
@@ -330,13 +164,13 @@ def india(request):
     return render_to_response('covid/india.html',{'z1':z1,'z2':z2,'z3':z3,'z4':z4,'state':ee,'district':er,'d0':d0,'d1':d1,'d2':d2,'d3':d3,'e0':e0,'e1':e1})
 
 def index(request):
-    s,r=world('USA')
+    s=world('USA')
     #ee,er,ra=indi('Bihar')
     tv=s['World']
-    to=r[0]
-    t1=r[1]
-    t2=r[2]
-    t3=tv[2]
+    tc=tv[0]
+    ta=tv[1]
+    tr=tv[2]
+    td=tv[3]
     fv = request.GET.get('country')
     if fv in s:
         bn=s[fv]
@@ -350,5 +184,5 @@ def index(request):
         c2=0
         c3=0
 
-    return render_to_response('covid/home.html',{'world':s,'wc1':to,'wc2':t1,'wc3':t2,'wc4':t3,'c1':c1,'c2':c2,'c3':c3,'c0':c0})
+    return render_to_response('covid/home.html',{'world':s,'wc1':tc,'wc2':td,'wc3':tr,'wc4':ta,'c1':c1,'c2':c2,'c3':c3,'c0':c0})
 
