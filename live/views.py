@@ -37,8 +37,9 @@ def world(country):
         for key, value in ele.items():
             s.append(value)
         worlddict[s[0]] = s[1:]
+    ra=worlddict['India']
 
-    return worlddict
+    return worlddict,ra
 
 def indi(state):
     statedata = requests.get('https://coronaupdate-api.herokuapp.com/indiadata/')
@@ -64,13 +65,13 @@ def indi(state):
     maindatas = requests.get('https://coronaupdate-api.herokuapp.com/indiahead/')
     data4 = maindatas.json()
 
-    maindata = []
-    for ele in data4:
-        for key, value in ele.items():
-            maindata.append(value)
+    #maindata = []
+    #for ele in data4:
+        #for key, value in ele.items():
+            #maindata.append(value)
 
 
-    return statedict,districtdict,maindata
+    return statedict,districtdict
 
 
 #def update(dd):
@@ -128,7 +129,8 @@ def about(request):
 
 
 def india(request):
-    ee, er,ra = indi('Bihar')
+    ee, er = indi('Bihar')
+    nm,ra=world('abc')
 
 
     z1=ra[0]
