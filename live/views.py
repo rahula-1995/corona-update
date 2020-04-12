@@ -220,7 +220,6 @@ def indi(state):
         headIndia.active_india_case = ra[1]
         headIndia.india_death_case=ra[2]
         headIndia.recovered_india_case = ra[3]
-        headIndia.save()
     else:
         c=headIndia()
         c.confirmed_india_case=ra[0]

@@ -8,7 +8,7 @@ urlpatterns = [
     path('',views.index,name="m"),
     path('india/',views.india,name="k"),
 path('about/',views.about,name="about"),
-    path('about/suspect/',views.suspect,name="suspect"),
+
     path('worlddata/',views.countryall.as_view(),name="api1"),
 path('indiadata/',views.stateall.as_view(),name="api2"),
 path('districtdata/',views.districtall.as_view(),name="api3"),
