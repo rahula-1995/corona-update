@@ -177,8 +177,8 @@ def index(request):
         bn=s[fv]
         c0="Status for"+str(fv)
         c1=bn[0]
-        c2=bn[1]
-        c3=bn[2]
+        c2=bn[3]
+        c3=bn[1]
     else:
         c0="Please type the country name"
         c1=0
